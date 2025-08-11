@@ -9,7 +9,7 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "php": "^8.4",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
         "livewire/flux": "^2.1.1",
@@ -17,13 +17,15 @@
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
+        "friendsofphp/php-cs-fixer": "^3.85",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.18",
         "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
         "pestphp/pest": "^3.8",
-        "pestphp/pest-plugin-laravel": "^3.2"
+        "pestphp/pest-plugin-laravel": "^3.2",
+        "rector/rector": "^2.1"
     },
     "autoload": {
         "psr-4": {
@@ -57,9 +59,34 @@
             "Composer\\Config::disableProcessTimeout",
             "npx concurrently -c \"#93c5fd,#c4b5fd,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"npm run dev\" --names='server,queue,vite'"
         ],
+        "ci": [
+            "vendor/bin/pest tests/Unit --parallel",
+            "@php artisan route:list",
+            "@rector --dry-run",
+            "@pint --test",
+            "@stan"
+        ],
+        "pint": [
+            "vendor/bin/pint"
+        ],
+        "rector": [
+            "vendor/bin/rector process"
+        ],
         "test": [
-            "@php artisan config:clear --ansi",
-            "@php artisan test"
+            "vendor/bin/pest tests"
+        ],
+        "stan": [
+            "vendor/bin/phpstan analyse --memory-limit=2G"
+        ],
+        "db:test": [
+            "@php artisan migrate:fresh --database=testing --force --env=testing --seed"
+        ],
+        "serve": [
+            "@php artisan serve --port=8001"
+        ],
+        "format": [
+            "vendor/bin/pint",
+            "vendor/bin/rector process"
         ]
     },
     "extra": {
